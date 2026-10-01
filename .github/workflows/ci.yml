@@ -1,15 +1,47 @@
 name: CI
+
 on:
   push:
   pull_request:
+
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run verify
+
+      # The first tooling PR generates the repository lockfile in CI. Once the
+      # lockfile is committed this remains a no-op consistency refresh.
+      - name: Resolve lockfile
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Install
+        run: npm ci
+
+      - name: Audit selected npm versions
+        run: npm run audit:current
+
+      - name: Verify library
+        run: npm run verify
+
+      - name: Verify Expo SDK 58 fixture
+        run: npm run verify:expo58
+
+      - name: Upload generated lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-lock
+          path: package-lock.json
+          if-no-files-found: error
+
+      - name: Upload dependency audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit
+          path: docs/dependency-audit.json
+          if-no-files-found: error
