@@ -3,3 +3,6 @@ export * from './easing.js';
 export * from './tween.js';
 export * from './scroll.js';
 export * from './gradient.js';
+export * from './plan.js';
+export * from './runtime.js';
+export * from './components.js';
