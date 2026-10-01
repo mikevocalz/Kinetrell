@@ -20,7 +20,9 @@ export default defineConfig({
     'react-native-reanimated',
     'react-native-worklets',
     'gsap',
+    'gsap/ScrollTrigger',
     '@gsap/react',
     'lenis',
+    'lenis/react',
   ],
 });
