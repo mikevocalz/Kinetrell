@@ -1,0 +1,26 @@
+import { defineConfig } from 'tsdown';
+
+export default defineConfig({
+  entry: [
+    'src/index.ts',
+    'src/core/index.ts',
+    'src/native/index.ts',
+    'src/compat/gsap.ts',
+    'src/web/gsap.ts',
+    'src/web/lenis.ts',
+    'src/web/gsap-lenis.ts',
+  ],
+  format: ['esm'],
+  dts: true,
+  sourcemap: true,
+  clean: true,
+  external: [
+    'react',
+    'react-native',
+    'react-native-reanimated',
+    'react-native-worklets',
+    'gsap',
+    '@gsap/react',
+    'lenis',
+  ],
+});
