@@ -61,7 +61,12 @@ Kinetrell targets Reanimated 4.7 / Worklets 0.13 and its primary fixture is Expo
 
 See `docs/reanimated-4.7.md`.
 
-
 ## Expo SDK 58 reference lane
 
 `examples/expo58` pins the current SDK 58 lane: Expo 58.0.1, React 19.3.0, React Native 0.88.0-rc.3, Reanimated 4.7.0, Worklets 0.13.0, and Gesture Handler 3.2.1. It includes a Reanimated 4.7 animated-gradient example.
+
+## Cross-platform semantic parallax
+
+`examples/parallax-anchors` demonstrates Kinetrell parallax with the same Reanimated scroll source on iOS, Android, and web, while `@expo/html-elements` supplies semantic layout primitives and `@nandorojo/anchor` supplies named anchor navigation.
+
+See `docs/semantic-parallax-anchors.md`.
