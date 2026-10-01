@@ -13,10 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
-      # The first tooling PR generates the repository lockfile in CI. Once the
-      # lockfile is committed this remains a no-op consistency refresh.
+      # Bootstrap the first lockfile before enabling setup-node's npm cache.
       - name: Resolve lockfile
         run: npm install --package-lock-only --ignore-scripts
 
