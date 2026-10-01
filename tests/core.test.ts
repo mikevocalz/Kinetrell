@@ -50,6 +50,29 @@ describe('core', () => {
     expect(evaluateMotion(compiled, 175).box.x).toBe(25);
   });
 
+  it('applies initial delay once when calculating repeated track duration', () => {
+    const compiled = compileMotion(
+      defineMotion({
+        id: 'delay-repeat-duration',
+        initial: { box: { x: 0 } },
+        tracks: [
+          {
+            target: 'box',
+            to: { x: 100 },
+            delayMs: 50,
+            durationMs: 100,
+            repeat: 2,
+            repeatDelayMs: 25,
+            ease: 'linear',
+          },
+        ],
+      }),
+    );
+
+    // 50 initial delay + 3 x 100ms cycles + 2 x 25ms repeat delays.
+    expect(compiled.durationMs).toBe(400);
+  });
+
   it('reverses yoyo cycles deterministically', () => {
     const compiled = compileMotion(
       defineMotion({

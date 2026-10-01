@@ -30,6 +30,7 @@ jobs:
         run: npm run verify
 
       - name: Upload generated lockfile
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: package-lock
@@ -37,11 +38,12 @@ jobs:
           if-no-files-found: error
 
       - name: Upload dependency audit
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dependency-audit
           path: docs/dependency-audit.json
-          if-no-files-found: error
+          if-no-files-found: warn
 
   verify-expo58:
     runs-on: ubuntu-latest
@@ -64,8 +66,9 @@ jobs:
         run: pnpm run typecheck
 
       - name: Upload Expo lockfile
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: expo58-pnpm-lock
           path: examples/expo58/pnpm-lock.yaml
-          if-no-files-found: error
+          if-no-files-found: warn
