@@ -29,21 +29,27 @@ function view(spec, fields) {
   return JSON.parse(raw || '{}');
 }
 
+function unwrap(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 const entries = [];
 let failed = false;
 
 for (const [name, version, reason] of selections) {
-  const latest = view(name, ['dist-tags.latest']);
-  const metadata = view(`${name}@${version}`, [
-    'name',
-    'version',
-    'engines',
-    'peerDependencies',
-    'peerDependenciesMeta',
-    'license',
-    'deprecated',
-    'dist.integrity',
-  ]);
+  const latest = unwrap(view(name, ['dist-tags.latest']));
+  const metadata = unwrap(
+    view(`${name}@${version}`, [
+      'name',
+      'version',
+      'engines',
+      'peerDependencies',
+      'peerDependenciesMeta',
+      'license',
+      'deprecated',
+      'dist.integrity',
+    ]),
+  );
 
   const latestVersion =
     typeof latest === 'string'
