@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { A, Article, Div, H1, H2, Header, Main, Nav, P, Section } from '@expo/html-elements';
 import {
   AnchorProvider,
@@ -66,6 +66,12 @@ function SemanticSection({
 function Demo() {
   const { registerScrollRef } = useRegisterScroller();
   const { offset, velocity, direction, handler } = useKinetrellScroll();
+  const setScrollerRef = useCallback(
+    (node: Parameters<typeof registerScrollRef>[0] | null) => {
+      if (node) registerScrollRef(node);
+    },
+    [registerScrollRef]
+  );
 
   const backdropStyle = useParallaxStyle(offset, {
     inputRange: [0, HERO_HEIGHT],
@@ -101,7 +107,7 @@ function Demo() {
       </Nav>
 
       <Animated.ScrollView
-        ref={registerScrollRef}
+        ref={setScrollerRef}
         onScroll={handler}
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContent}
@@ -146,17 +152,13 @@ function Demo() {
               The anchor package remains an example-level integration rather than
               a Kinetrell runtime dependency.
             </P>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => void offset}
-              style={styles.callout}
-            >
+            <Div style={styles.callout}>
               <Text style={styles.calloutTitle}>AnchorProvider + Animated.ScrollView</Text>
               <Text style={styles.calloutBody}>
                 This is the key interoperability pattern: anchor measurement and
                 imperative navigation coexist with Kinetrell's UI-thread scroll handler.
               </Text>
-            </Pressable>
+            </Div>
           </SemanticSection>
 
           <SemanticSection id="semantic" title="Semantic shell, animated internals">
@@ -182,7 +184,7 @@ function Demo() {
 
 export default function App() {
   return (
-    <AnchorProvider>
+    <AnchorProvider horizontal={false}>
       <Demo />
     </AnchorProvider>
   );
@@ -258,7 +260,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#20283b',
   },
-  h2: { color: '#fff', fontSize: 34, lineHeight: 40, fontWeight: '850', marginBottom: 16 },
+  h2: { color: '#fff', fontSize: 34, lineHeight: 40, fontWeight: '800', marginBottom: 16 },
   copy: { color: '#aeb8cf', fontSize: 17, lineHeight: 27 },
   cards: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 24 },
   card: {
