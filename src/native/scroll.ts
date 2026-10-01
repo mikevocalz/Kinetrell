@@ -1,27 +1,200 @@
-import { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
+import { useCallback } from 'react';
+import type { ScrollView } from 'react-native';
+import {
+  scrollTo as reanimatedScrollTo,
+  useAnimatedReaction,
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useDerivedValue,
+  useSharedValue,
+} from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
+import { scheduleOnUI } from 'react-native-worklets';
+import type { NativeMotionHandle } from './runtime.js';
+import {
+  parallaxFromProgress,
+  sectionViewportProgress,
+} from './scroll-math.js';
+
+export type ScrollAxis = 'x' | 'y';
 
 export type KinetrellScrollState = Readonly<{
-  offset: { value: number };
-  velocity: { value: number };
-  direction: { value: -1 | 0 | 1 };
+  axis: ScrollAxis;
+  offset: SharedValue<number>;
+  velocity: SharedValue<number>;
+  direction: SharedValue<-1 | 0 | 1>;
+  viewportLength: SharedValue<number>;
+  contentLength: SharedValue<number>;
+  isDragging: SharedValue<boolean>;
+  interactionGeneration: SharedValue<number>;
 }>;
 
-export function useKinetrellScroll() {
+export type KinetrellScrollSource = KinetrellScrollState & Readonly<{
+  handler: ReturnType<typeof useAnimatedScrollHandler>;
+}>;
+
+export function useKinetrellScroll(
+  options: Readonly<{ axis?: ScrollAxis }> = {},
+): KinetrellScrollSource {
+  const axis = options.axis ?? 'y';
   const offset = useSharedValue(0);
   const velocity = useSharedValue(0);
   const direction = useSharedValue<-1 | 0 | 1>(0);
-  const handler = useAnimatedScrollHandler({
-    onScroll(event, context: { last?: number; time?: number }) {
+  const viewportLength = useSharedValue(0);
+  const contentLength = useSharedValue(0);
+  const isDragging = useSharedValue(false);
+  const interactionGeneration = useSharedValue(0);
+
+  const handler = useAnimatedScrollHandler<{
+    last?: number;
+    time?: number;
+  }>({
+    onBeginDrag() {
+      isDragging.value = true;
+      interactionGeneration.value += 1;
+    },
+
+    onScroll(event, context) {
+      const next =
+        axis === 'y' ? event.contentOffset.y : event.contentOffset.x;
+      const viewport =
+        axis === 'y'
+          ? event.layoutMeasurement.height
+          : event.layoutMeasurement.width;
+      const content =
+        axis === 'y' ? event.contentSize.height : event.contentSize.width;
+
       const now = globalThis.performance?.now?.() ?? 0;
-      const next = event.contentOffset.y;
       const last = context.last ?? next;
-      const dt = Math.max(1, now - (context.time ?? now));
+      const lastTime = context.time ?? now;
+      const elapsed = Math.max(1, now - lastTime);
+      const delta = next - last;
+
       offset.value = next;
-      velocity.value = ((next - last) / dt) * 1000;
-      direction.value = next === last ? 0 : next > last ? 1 : -1;
+      velocity.value = (delta / elapsed) * 1000;
+      direction.value = delta === 0 ? 0 : delta > 0 ? 1 : -1;
+      viewportLength.value = viewport;
+      contentLength.value = content;
+
       context.last = next;
       context.time = now;
     },
+
+    onEndDrag() {
+      isDragging.value = false;
+    },
+
+    onMomentumEnd() {
+      velocity.value = 0;
+      direction.value = 0;
+    },
   });
-  return { offset, velocity, direction, handler } as const;
+
+  return {
+    axis,
+    offset,
+    velocity,
+    direction,
+    viewportLength,
+    contentLength,
+    isDragging,
+    interactionGeneration,
+    handler,
+  };
+}
+
+export function useSectionProgress(
+  scroll: KinetrellScrollState,
+  section: Readonly<{
+    start: number | SharedValue<number>;
+    length: number | SharedValue<number>;
+  }>,
+) {
+  return useDerivedValue(() => {
+    const start =
+      typeof section.start === 'number' ? section.start : section.start.value;
+    const length =
+      typeof section.length === 'number' ? section.length : section.length.value;
+
+    return sectionViewportProgress(
+      scroll.offset.value,
+      start,
+      length,
+      scroll.viewportLength.value,
+    );
+  });
+}
+
+export function useParallax(
+  progress: SharedValue<number>,
+  distance: number,
+  center = 0.5,
+) {
+  return useDerivedValue(() =>
+    parallaxFromProgress(progress.value, distance, center),
+  );
+}
+
+/**
+ * Directly scrubs a Kinetrell motion from an authoritative native scroll
+ * progress value. There is no JS-thread frame bridge.
+ */
+export function useScrollScrub(
+  motion: NativeMotionHandle,
+  progress: SharedValue<number>,
+) {
+  useAnimatedReaction(
+    () => Math.min(1, Math.max(0, progress.value)),
+    (next) => {
+      motion.playheadMs.value = next * motion.compiled.durationMs;
+    },
+    [motion.compiled.durationMs],
+  );
+}
+
+export type NativeScrollController = Readonly<{
+  ref: ReturnType<typeof useAnimatedRef<ScrollView>>;
+  scrollTo: (
+    offset: number,
+    options?: Readonly<{ animated?: boolean; crossOffset?: number }>,
+  ) => void;
+  cancelPending: () => void;
+}>;
+
+/**
+ * A thin command adapter around Reanimated's native scrollTo. It never creates
+ * a second scroll physics engine and never disables user interaction.
+ */
+export function useNativeScrollController(): NativeScrollController {
+  const ref = useAnimatedRef<ScrollView>();
+  const commandGeneration = useSharedValue(0);
+
+  const scrollTo = useCallback(
+    (
+      offset: number,
+      options: Readonly<{ animated?: boolean; crossOffset?: number }> = {},
+    ) => {
+      if (!Number.isFinite(offset)) {
+        throw new RangeError('scroll offset must be finite');
+      }
+
+      const generation = commandGeneration.value + 1;
+      commandGeneration.value = generation;
+      const animated = options.animated ?? true;
+      const crossOffset = options.crossOffset ?? 0;
+
+      scheduleOnUI(() => {
+        'worklet';
+        if (commandGeneration.value !== generation) return;
+        reanimatedScrollTo(ref, crossOffset, offset, animated);
+      });
+    },
+    [commandGeneration, ref],
+  );
+
+  const cancelPending = useCallback(() => {
+    commandGeneration.value += 1;
+  }, [commandGeneration]);
+
+  return { ref, scrollTo, cancelPending };
 }
