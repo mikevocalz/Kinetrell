@@ -19,8 +19,7 @@ export function compileMotion(definition: MotionDefinition): CompiledMotion {
     const repeatDelay = finiteNonNegative(track.repeatDelayMs ?? 0, `tracks[${index}].repeatDelayMs`);
     const repeat = track.repeat ?? 0;
     if (!Number.isInteger(repeat) || repeat < 0) throw new RangeError(`tracks[${index}].repeat must be an integer >= 0`);
-    const cycle = delay + duration + repeatDelay;
-    const endMs = atMs + cycle * (repeat + 1) - (repeat > 0 ? repeatDelay : 0);
+    const endMs = atMs + delay + duration * (repeat + 1) + repeatDelay * repeat;
     durationMs = Math.max(durationMs, endMs);
     return Object.freeze({ ...track, atMs, endMs, ease: track.ease ?? 'linear' });
   });
