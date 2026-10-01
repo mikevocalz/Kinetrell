@@ -29,37 +29,55 @@ function view(spec, fields) {
   return JSON.parse(raw || '{}');
 }
 
+function unwrap(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 const entries = [];
 let failed = false;
 
 for (const [name, version, reason] of selections) {
-  const latest = view(name, ['dist-tags.latest']);
-  const metadata = view(`${name}@${version}`, [
-    'name',
-    'version',
-    'engines',
-    'peerDependencies',
-    'peerDependenciesMeta',
-    'license',
-    'deprecated',
-    'dist.integrity',
-  ]);
+  const latest = unwrap(view(name, ['dist-tags.latest']));
+  const metadata = unwrap(
+    view(`${name}@${version}`, [
+      'name',
+      'version',
+      'engines',
+      'peerDependencies',
+      'peerDependenciesMeta',
+      'license',
+      'deprecated',
+      'dist.integrity',
+    ]),
+  );
 
   const latestVersion =
     typeof latest === 'string'
       ? latest
       : latest?.['dist-tags.latest'] ?? latest?.latest ?? null;
 
-  const ok = metadata.version === version && !metadata.deprecated;
+  const selectedVersion =
+    typeof metadata === 'string'
+      ? metadata
+      : metadata?.version ?? null;
+
+  const deprecated =
+    typeof metadata === 'object' && metadata !== null
+      ? metadata.deprecated ?? null
+      : null;
+
+  const ok = selectedVersion === version && !deprecated;
   failed ||= !ok;
 
   entries.push({
     name,
     selectedVersion: version,
+    resolvedVersion: selectedVersion,
     reason,
     observedLatest: latestVersion,
     selectedIsLatest: latestVersion === version,
     prerelease: version.includes('-'),
+    deprecated,
     metadata,
     ok,
   });
@@ -88,6 +106,8 @@ mkdirSync('docs', { recursive: true });
 writeFileSync('docs/dependency-audit.json', JSON.stringify(report, null, 2) + '\n');
 
 if (failed) {
-  console.error('Dependency audit failed. See docs/dependency-audit.json');
+  const failures = entries.filter((entry) => !entry.ok);
+  console.error('Dependency audit failed for:');
+  console.error(JSON.stringify(failures, null, 2));
   process.exitCode = 1;
 }
