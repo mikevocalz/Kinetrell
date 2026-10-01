@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  verify:
+  verify-library:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,6 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Use current npm
+        run: npm install --global npm@12.2.0
 
       - name: Resolve lockfile
         run: npm install --package-lock-only --ignore-scripts
@@ -26,9 +29,6 @@ jobs:
       - name: Verify library
         run: npm run verify
 
-      - name: Verify Expo SDK 58 fixture
-        run: npm run verify:expo58
-
       - name: Upload generated lockfile
         uses: actions/upload-artifact@v4
         with:
@@ -41,4 +41,31 @@ jobs:
         with:
           name: dependency-audit
           path: docs/dependency-audit.json
+          if-no-files-found: error
+
+  verify-expo58:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm for Expo preview lane
+        run: npm install --global pnpm@12.8.1
+
+      - name: Install Expo SDK 58 fixture
+        working-directory: examples/expo58
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Typecheck Expo SDK 58 fixture
+        working-directory: examples/expo58
+        run: pnpm run typecheck
+
+      - name: Upload Expo lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: expo58-pnpm-lock
+          path: examples/expo58/pnpm-lock.yaml
           if-no-files-found: error
