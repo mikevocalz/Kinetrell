@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Kinetrell Semantic Parallax",
+    "slug": "kinetrell-semantic-parallax",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "newArchEnabled": true,
+    "platforms": ["ios", "android", "web"]
+  }
+}
