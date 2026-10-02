@@ -51,7 +51,8 @@ try {
       timeout: 60_000,
     }),
   );
-  const filename = packed[0]?.filename;
+  const packResult = Array.isArray(packed) ? packed[0] : packed;
+  const filename = packResult?.filename;
   if (!filename) throw new Error('npm pack did not return a tarball filename');
   tarballPath = resolve(root, filename);
 
