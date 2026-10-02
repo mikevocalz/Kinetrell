@@ -36,8 +36,12 @@ progress 0.5. Consumers choose how to apply it to their own animated style.
 ## Programmatic scrolling
 
 `useNativeScrollController()` wraps Reanimated's native `scrollTo` and
-Worklets 0.13 `scheduleOnUI`. It does not create an RAF loop or take over
-touch handling. New commands invalidate older queued commands.
+Worklets 0.13 `scheduleOnUI`. Pass the observed scroll source's
+`interactionGeneration` when programmatic commands should be invalidated as
+soon as a native drag begins. The controller is axis-aware, does not create an
+RAF loop, and does not take over touch handling. New commands invalidate older
+queued commands; once a platform-native animated scroll has started, native
+user input remains authoritative.
 
 Platform-native animated scrolling itself remains owned by the native scroll
 view. Kinetrell does not claim byte-for-byte Lenis wheel/touch physics parity.
