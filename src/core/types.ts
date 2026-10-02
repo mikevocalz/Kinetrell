@@ -28,10 +28,9 @@ export type EaseName =
   | 'power2.out'
   | 'power2.inOut';
 
-export type MotionTrack = Readonly<{
+type MotionTrackBase = Readonly<{
   target: string;
   from?: MotionState;
-  to: MotionState;
   atMs?: number;
   durationMs: number;
   delayMs?: number;
@@ -41,6 +40,26 @@ export type MotionTrack = Readonly<{
   yoyo?: boolean;
 }>;
 
+export type MotionTweenTrack = MotionTrackBase &
+  Readonly<{
+    to: MotionState;
+    keyframes?: never;
+  }>;
+
+export type MotionKeyframe = Readonly<{
+  offset: number;
+  values: MotionState;
+  ease?: EaseName;
+}>;
+
+export type MotionKeyframeTrack = MotionTrackBase &
+  Readonly<{
+    keyframes: readonly MotionKeyframe[];
+    to?: never;
+  }>;
+
+export type MotionTrack = MotionTweenTrack | MotionKeyframeTrack;
+
 export type MotionDefinition = Readonly<{
   schemaVersion?: 1;
   id: string;
@@ -49,10 +68,18 @@ export type MotionDefinition = Readonly<{
   labels?: Readonly<Record<string, number>>;
 }>;
 
-export type CompiledTrack = Readonly<MotionTrack & {
+export type CompiledTrack = Readonly<{
+  target: string;
+  from?: MotionState;
+  to: MotionState;
   atMs: number;
-  endMs: number;
+  durationMs: number;
+  delayMs?: number;
   ease: EaseName;
+  repeat?: number;
+  repeatDelayMs?: number;
+  yoyo?: boolean;
+  endMs: number;
 }>;
 
 export type CompiledMotion = Readonly<{

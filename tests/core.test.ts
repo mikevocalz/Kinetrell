@@ -95,6 +95,73 @@ describe('core', () => {
     expect(evaluateMotion(compiled, 200).box.x).toBe(0);
   });
 
+  it('expands keyframes into deterministic compiled segments', () => {
+    const compiled = compileMotion(
+      defineMotion({
+        id: 'keyframes',
+        initial: { box: { x: 0, opacity: 0 } },
+        tracks: [
+          {
+            target: 'box',
+            durationMs: 1000,
+            keyframes: [
+              { offset: 0.5, values: { x: 100 }, ease: 'linear' },
+              {
+                offset: 1,
+                values: { x: 0, opacity: 1 },
+                ease: 'linear',
+              },
+            ],
+          },
+        ],
+      }),
+    );
+
+    expect(compiled.tracks).toHaveLength(2);
+    expect(compiled.tracks.map((track) => track.durationMs)).toEqual([500, 500]);
+    expect(evaluateMotion(compiled, 250).box.x).toBe(50);
+    expect(evaluateMotion(compiled, 750).box.x).toBe(50);
+    expect(evaluateMotion(compiled, 750).box.opacity).toBe(0.5);
+  });
+
+  it('validates keyframe offsets and loop combinations', () => {
+    expect(() =>
+      compileMotion(
+        defineMotion({
+          id: 'bad-keyframes',
+          initial: { box: { x: 0 } },
+          tracks: [
+            {
+              target: 'box',
+              durationMs: 1000,
+              keyframes: [
+                { offset: 0.8, values: { x: 80 } },
+                { offset: 0.7, values: { x: 100 } },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toThrow(/strictly increasing/);
+
+    expect(() =>
+      compileMotion(
+        defineMotion({
+          id: 'keyframe-repeat',
+          initial: { box: { x: 0 } },
+          tracks: [
+            {
+              target: 'box',
+              durationMs: 1000,
+              repeat: 1,
+              keyframes: [{ offset: 1, values: { x: 100 } }],
+            },
+          ],
+        }),
+      ),
+    ).toThrow(/cannot currently combine/);
+  });
+
   it('maps GSAP power2 to a cubic polynomial', () => {
     expect(applyEase('power2.in', 0.5)).toBe(0.125);
     expect(applyEase('power2.out', 0.5)).toBe(0.875);

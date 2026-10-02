@@ -6,6 +6,7 @@
 | to / from / fromTo / set | yes | yes | yes |
 | Labels and relative positions | yes | yes after compile | yes after compile |
 | Repeat / yoyo | yes | yes | yes |
+| Keyframes | yes; compiled to segments | yes | yes |
 | Seek / reverse / playback rate | yes | yes | GSAP native controls |
 | Target-array stagger | recorder | compiled tracks | compiled tracks |
 | Scroll reveal / scrub | math only | UI-runtime progress | ScrollTrigger |
