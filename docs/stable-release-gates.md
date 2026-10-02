@@ -9,25 +9,23 @@ Kinetrell stays pre-1.0 until every gate below has evidence.
 - GSAP + ScrollTrigger + Lenis browser execution;
 - Expo SDK 58 / RN 0.88 RC fixture;
 - package-boundary and npm-pack checks;
+- packed tarball consumer matrix on clean core/native/GSAP/Lenis consumers;
+- real Chromium + WebKit interaction coverage;
+- real Next.js App Router SSR + hydration verification;
 - native performance/virtualization fixture;
 - semantic parallax + anchor integration;
-- browser DOM bindings and native gesture adapter.
+- browser DOM bindings and native gesture adapter;
+- current GSAP 3.15.0 Standard "No Charge" License review;
+- direct + transitive Bento/Tamagui exclusion enforcement.
 
-## Must be green before stable 1.0
+## Remaining before stable 1.0
 
-1. Packed tarball consumer matrix on clean native/browser consumers.
-2. Real Chromium + WebKit browser interaction suite.
-3. Real Next.js SSR + hydration verification.
-4. Physical iOS release-build run of the native performance fixture.
-5. Physical Android release-build run of the native performance fixture.
-6. Review the GSAP license version in force for the exact GSAP release selected
-   for Kinetrell's release candidate.
-7. Re-run the live npm audit immediately before tagging.
-8. Replace or re-evaluate the Expo 58 RN 0.88 prerelease compatibility workaround
+1. Physical iOS release-build run of the native performance fixture.
+2. Physical Android release-build run of the native performance fixture.
+3. Re-run the live npm audit immediately before tagging the release candidate.
+4. Replace or re-evaluate the Expo 58 RN 0.88 prerelease compatibility workaround
    once Expo/RN/Reanimated publish a stable matching lane.
-9. Verify no excluded dependencies (Bento, Tamagui) are present directly or
-   transitively.
-10. Record unverified hardware/platform claims as unverified rather than passed.
+5. Record unavailable physical-hardware/platform claims as unverified, never passed.
 
 ## Physical-device evidence format
 
@@ -47,5 +45,5 @@ For each iOS/Android run capture:
 - background/foreground resume behavior;
 - RTL + horizontal nested-scroll behavior.
 
-No simulator, unit test, or host CPU benchmark is labeled as physical-device FPS
-evidence.
+No simulator, unit test, host CPU benchmark, or browser CI is labeled as
+physical-device FPS evidence.
