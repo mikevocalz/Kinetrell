@@ -10,6 +10,7 @@ export default defineConfig({
     'src/native/gesture.ts',
     'src/compat/gsap.ts',
     'src/web/gsap.ts',
+    'src/web/react.tsx',
     'src/web/lenis.ts',
     'src/web/gsap-lenis.ts',
   ],
