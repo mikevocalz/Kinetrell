@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "kinetrell/core": ["../../src/core/index.ts"],
+      "kinetrell/web/gsap": ["../../src/web/gsap.ts"],
+      "kinetrell/web/lenis": ["../../src/web/lenis.ts"],
+      "kinetrell/web/gsap-lenis": ["../../src/web/gsap-lenis.ts"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

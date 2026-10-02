@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
@@ -72,3 +74,28 @@ jobs:
           name: expo58-pnpm-lock
           path: examples/expo58/pnpm-lock.yaml
           if-no-files-found: warn
+
+  verify-web-showcase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Use current npm
+        run: npm install --global npm@12.2.0
+
+      - name: Install library dependencies
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          npm ci
+
+      - name: Install showcase dependencies
+        working-directory: examples/web
+        run: npm install --ignore-scripts
+
+      - name: Verify Vite showcase
+        working-directory: examples/web
+        run: npm run verify
