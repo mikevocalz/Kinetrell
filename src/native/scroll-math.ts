@@ -72,3 +72,43 @@ export function sceneIsActive(
   const value = clamp01(progress);
   return value >= start && value <= end;
 }
+
+export function logicalScrollOffset(
+  physicalOffset: number,
+  contentLength: number,
+  viewportLength: number,
+  rtl: boolean,
+): number {
+  'worklet';
+  if (!rtl) return Math.max(0, physicalOffset);
+  const maxOffset = Math.max(0, contentLength - viewportLength);
+  return Math.max(0, Math.min(maxOffset, maxOffset - physicalOffset));
+}
+
+export function directionalSnapPoint(
+  offset: number,
+  velocity: number,
+  points: readonly number[],
+  velocityThreshold = 420,
+): number | null {
+  'worklet';
+  if (points.length === 0) return null;
+
+  const ordered = [...points].sort((a, b) => a - b);
+  if (Math.abs(velocity) < velocityThreshold) {
+    return nearestSnapPoint(offset, ordered);
+  }
+
+  if (velocity > 0) {
+    for (const point of ordered) {
+      if (point > offset) return point;
+    }
+    return ordered[ordered.length - 1]!;
+  }
+
+  for (let index = ordered.length - 1; index >= 0; index -= 1) {
+    const point = ordered[index]!;
+    if (point < offset) return point;
+  }
+  return ordered[0]!;
+}
