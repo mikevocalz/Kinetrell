@@ -14,7 +14,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
       "kinetrell/core": ["../../src/core/index.ts"],
       "kinetrell/web/gsap": ["../../src/web/gsap.ts"],
