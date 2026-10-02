@@ -99,3 +99,11 @@ jobs:
       - name: Verify Vite showcase
         working-directory: examples/web
         run: npm run verify
+
+      - name: Install Playwright browsers
+        working-directory: examples/web
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Run browser interaction tests
+        working-directory: examples/web
+        run: npm run test:e2e
