@@ -2,133 +2,73 @@
 
 **One motion language. Native execution.**
 
-Kinetrell is a typed motion layer for sharing timeline intent across React
-Native and the web without pretending the runtimes are identical.
+Kinetrell maps a deterministic motion/timeline model to React Native Reanimated and to real GSAP/Lenis integrations on the web.
 
-- React Native: **Reanimated 4.7 + Worklets 0.13**
-- Expo target: **SDK 58 + React Native 0.88.0-rc.3**
-- Browser: real **GSAP 3.15 + ScrollTrigger + Lenis 1.3**
+## Scope
+
+- GSAP-style authoring subset: `to`, `from`, `fromTo`, `set`, labels, sequencing, overlap, repeat/yoyo.
+- Native runtime building blocks for Reanimated 4.7+ and Worklets 0.13+, with an Expo SDK 58 / RN 0.88.0-rc.3 reference lane.
+- Native scroll state for Lenis-like choreography while preserving native scrolling.
+- Real GSAP and Lenis browser adapters.
 - No Bento. No Tamagui. No UI kit.
 
 ## Install
-
-Native:
 
 ```bash
 npm install kinetrell react-native-reanimated react-native-worklets
 ```
 
-Web adapters:
+For web GSAP/Lenis adapters:
 
 ```bash
-npm install kinetrell gsap @gsap/react lenis
+npm install gsap @gsap/react lenis
 ```
 
-The browser packages are isolated optional peers. Native consumers do not need
-to install them.
-
-## Portable motion
+## Core
 
 ```ts
-import { compileMotion, defineMotion } from 'kinetrell/core';
+import { compileMotion, defineMotion, evaluateMotion } from 'kinetrell';
 
-const reveal = defineMotion({
+const motion = defineMotion({
   id: 'reveal',
-  initial: {
-    card: { opacity: 0, y: 24, scale: 0.98 },
-  },
+  initial: { card: { opacity: 0, y: 24 } },
   tracks: [
-    {
-      target: 'card',
-      to: { opacity: 1, y: 0, scale: 1 },
-      durationMs: 420,
-      ease: 'cubic.out',
-    },
+    { target: 'card', to: { opacity: 1, y: 0 }, durationMs: 420, ease: 'cubic.out' },
   ],
 });
 
-const compiled = compileMotion(reveal);
+const compiled = compileMotion(motion);
+const stateAt210ms = evaluateMotion(compiled, 210);
 ```
 
-## React Native
-
-```tsx
-import { Motion, useMotion } from 'kinetrell/native';
-
-export function Card() {
-  const motion = useMotion(reveal, {
-    autoplay: true,
-    reducedMotion: 'system',
-  });
-
-  return (
-    <Motion.View motion={motion} target="card">
-      {/* your content */}
-    </Motion.View>
-  );
-}
-```
-
-Kinetrell uses one Reanimated shared-value playhead per motion instance. Scroll
-scrubbing, parallax and programmatic scrolling stay on the UI Runtime and keep
-native scroll physics intact.
-
-## GSAP-style authoring
+## GSAP-style recorder
 
 ```ts
 import { recordGsap } from 'kinetrell/compat/gsap';
 
-const reveal = recordGsap(
-  { card: { opacity: 0, y: 24 } },
-  (tl) => {
-    tl.fromTo(
-      'card',
-      { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' },
-    );
-  },
-);
+const motion = recordGsap({ panel: { opacity: 0, y: 24 } }, (tl) => {
+  tl.fromTo('panel', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' });
+});
 ```
 
-The recorder supports a documented subset: labels, sibling anchors, relative
-positions, repeats/yoyo and simple stagger. Unsupported GSAP/browser behavior
-is rejected instead of silently discarded.
+## Web
 
-## Real GSAP + Lenis on web
+`kinetrell/web/gsap` executes compiled motion using the real `gsap` package. `kinetrell/web/lenis` creates an owned Lenis instance. `kinetrell/web/gsap-lenis` synchronizes an existing Lenis instance to GSAP's ticker with the required seconds → milliseconds conversion.
 
-```ts
-import { createGsapTimeline } from 'kinetrell/web/gsap';
-import { createKinetrellLenis } from 'kinetrell/web/lenis';
-import { connectGsapLenis } from 'kinetrell/web/gsap-lenis';
-```
+## Reanimated 4.7 awareness
 
-The web adapters execute the actual packages. The combined bridge converts
-GSAP ticker seconds to Lenis milliseconds and has explicit clock ownership so
-two RAF loops never drive the same Lenis instance.
+Kinetrell targets Reanimated 4.7 / Worklets 0.13 and its primary fixture is Expo SDK 58 + React Native 0.88.0-rc.3. It explicitly uses the new `backgroundImage` gradient path and accounts for the default light-tree layout engine, `contrastColor`, experimental shared-element/platform-transition capabilities, RN 0.88 changes, and recent Worklets runtime improvements. Experimental shared-element and Android platform CSS-transition flags are **not** enabled automatically.
 
-Browser apps using Lenis should import:
+See `docs/reanimated-4.7.md`.
 
-```ts
-import 'lenis/dist/lenis.css';
-```
 
-## Expo SDK 58
+## Expo SDK 58 reference lane
 
-`examples/expo58` pins Expo 58.0.1, React 19.3.0, RN 0.88.0-rc.3,
-Reanimated 4.7.0 and Worklets 0.13.0.
+`examples/expo58` pins the current SDK 58 lane: Expo 58.0.2, React 19.3.0, React Native 0.88.0-rc.3, Reanimated 4.7.0, Worklets 0.13.0, and Gesture Handler 3.2.1. It includes a Reanimated 4.7 animated-gradient example.
 
-npm currently rejects that prerelease combination because Reanimated 4.7's
-published peer range does not include prerelease semver even though Reanimated
-documents RN 0.88 support. CI therefore validates the library with strict npm
-on RN 0.87.1 and validates the exact Expo 58 preview lane separately with pnpm.
-No `--force` or `--legacy-peer-deps` is used.
 
-## Reanimated 4.7
+## Cross-platform semantic parallax
 
-Kinetrell accounts for the new default layout-animation engine, RN 0.88
-support, Synchronizable-backed mutables, the changed animated-ref model,
-UI-thread `backgroundImage` gradients, `contrastColor()`, and Worklets 0.13
-scheduling. Experimental shared-element and Android CSS platform-transition
-flags are never enabled automatically.
+`examples/parallax-anchors` demonstrates Kinetrell parallax with the same Reanimated scroll source on iOS, Android, and web, while `@expo/html-elements` supplies semantic layout primitives and `@nandorojo/anchor` supplies named anchor navigation.
 
-See the files under `docs/` for capabilities and limitations.
+See `docs/semantic-parallax-anchors.md`.
