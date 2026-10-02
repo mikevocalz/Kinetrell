@@ -39,6 +39,10 @@
     "./web/gsap-lenis": {
       "types": "./dist/web/gsap-lenis.d.mts",
       "import": "./dist/web/gsap-lenis.mjs"
+    },
+    "./native/gesture": {
+      "types": "./dist/native/gesture.d.mts",
+      "import": "./dist/native/gesture.mjs"
     }
   },
   "scripts": {
@@ -60,16 +64,34 @@
     "react": ">=19.0.0 <20",
     "react-native": ">=0.86.0-0 <0.89.0-0",
     "react-native-reanimated": ">=4.7.0 <5",
-    "react-native-worklets": ">=0.13.0 <0.14"
+    "react-native-worklets": ">=0.13.0 <0.14",
+    "react-native-gesture-handler": ">=3.2.1 <4"
   },
   "peerDependenciesMeta": {
-    "@gsap/react": { "optional": true },
-    "gsap": { "optional": true },
-    "lenis": { "optional": true },
-    "react": { "optional": true },
-    "react-native": { "optional": true },
-    "react-native-reanimated": { "optional": true },
-    "react-native-worklets": { "optional": true }
+    "@gsap/react": {
+      "optional": true
+    },
+    "gsap": {
+      "optional": true
+    },
+    "lenis": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-worklets": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@gsap/react": "2.1.2",
