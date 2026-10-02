@@ -33,13 +33,35 @@ test('loads the real GSAP + ScrollTrigger + Lenis renderer', async ({ page }) =>
   expect(consoleErrors).toEqual([]);
 });
 
-test('supports keyboard scrolling without trapping focus', async ({ page }) => {
+test('does not trap PageDown keyboard input', async ({ page }) => {
   await page.goto('/');
-  await page.keyboard.press('PageDown');
-  await page.waitForTimeout(200);
 
-  const scrollY = await page.evaluate(() => window.scrollY);
-  expect(scrollY).toBeGreaterThan(0);
+  const hasScrollableDocument = await page.evaluate(
+    () => document.documentElement.scrollHeight > window.innerHeight,
+  );
+  expect(hasScrollableDocument).toBeTruthy();
+
+  await page.evaluate(() => {
+    (window as any).__kinetrellPageDownPrevented = null;
+    window.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key !== 'PageDown') return;
+        queueMicrotask(() => {
+          (window as any).__kinetrellPageDownPrevented = event.defaultPrevented;
+        });
+      },
+      { once: true },
+    );
+  });
+
+  await page.keyboard.press('PageDown');
+  await page.waitForTimeout(50);
+
+  const prevented = await page.evaluate(
+    () => (window as any).__kinetrellPageDownPrevented,
+  );
+  expect(prevented).toBe(false);
 });
 
 test('tears down without browser errors on reload', async ({ page }) => {
