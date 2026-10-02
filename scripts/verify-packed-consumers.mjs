@@ -51,9 +51,30 @@ try {
       timeout: 60_000,
     }),
   );
-  const packResult = Array.isArray(packed) ? packed[0] : packed;
-  const filename = packResult?.filename;
-  if (!filename) throw new Error('npm pack did not return a tarball filename');
+  const findFilename = (value) => {
+    if (!value) return null;
+    if (typeof value === 'object' && typeof value.filename === 'string') {
+      return value.filename;
+    }
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const filename = findFilename(item);
+        if (filename) return filename;
+      }
+      return null;
+    }
+    if (typeof value === 'object') {
+      for (const item of Object.values(value)) {
+        const filename = findFilename(item);
+        if (filename) return filename;
+      }
+    }
+    return null;
+  };
+  const filename = findFilename(packed);
+  if (!filename) {
+    throw new Error(`npm pack did not return a tarball filename: ${JSON.stringify(packed)}`);
+  }
   tarballPath = resolve(root, filename);
 
   {
