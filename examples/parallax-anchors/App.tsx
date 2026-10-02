@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#252b3a',
   },
   heroBackdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundImage:
       'linear-gradient(135deg, #10162b 0%, #254fd8 43%, #8b3de8 72%, #16c7d9 100%)',
   },
