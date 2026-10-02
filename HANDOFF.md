@@ -1,17 +1,20 @@
 # Kinetrell handoff
 
-The alpha implementation now covers the core compiler, GSAP-style recorder,
-Reanimated native runtime, native scroll choreography, actual GSAP/Lenis web
-adapters, Expo SDK 58 fixture, CI and package boundaries.
+The alpha implementation covers the compiler, GSAP-style authoring, Reanimated
+native runtime, scroll choreography, actual GSAP/Lenis web adapters, Expo SDK 58
+fixtures, package boundaries, semantic parallax, React DOM bindings, gesture
+interruption, and native performance instrumentation.
 
-Before declaring a stable 1.0 release:
+## Remaining release work
 
-- run physical iOS and Android interaction/performance fixtures;
-- add browser interaction tests in a real Chromium/WebKit environment;
-- install the packed tarball into clean external native and browser consumers;
-- verify SSR/hydration in a real React framework;
-- review GSAP licensing for the intended distribution/use;
-- replace the Expo 58 RC-specific workaround once RN 0.88 stable and matching
-  peer metadata are published.
+- merge and keep green the packed-consumer, browser interaction, and Next.js SSR
+  verification lanes;
+- execute the native performance fixture on physical iOS and Android hardware in
+  release mode and record the measurements defined in
+  `docs/stable-release-gates.md`;
+- re-check the GSAP Standard License for the exact release candidate dependency;
+- re-run the live npm dependency audit before tagging;
+- revisit the Expo SDK 58 RN 0.88 prerelease peer workaround once the stable
+  release lane is published.
 
 No production deployment or npm publication is implied by this repository.
