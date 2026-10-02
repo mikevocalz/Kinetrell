@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ScrollView } from 'react-native';
 import {
   scrollTo as reanimatedScrollTo,
@@ -232,7 +232,10 @@ export function useNativeSnapController(
   }> = {},
 ) {
   const pointsRef = useSharedValue([...points]);
-  pointsRef.value = [...points];
+
+  useEffect(() => {
+    pointsRef.value = [...points];
+  }, [points, pointsRef]);
 
   useAnimatedReaction(
     () => ({
@@ -242,8 +245,10 @@ export function useNativeSnapController(
       interaction: scroll.interactionGeneration.value,
     }),
     (current, previous) => {
-      if (!previous || previous.dragging || current.dragging) return;
-      if (current.interaction === previous.interaction) return;
+      // Snap exactly once when a native drag transitions from active to ended.
+      // interactionGeneration increments on begin-drag and remains stable until
+      // the next user interaction, so it also invalidates any queued snap.
+      if (!previous || !previous.dragging || current.dragging) return;
 
       const destination = directionalSnapPoint(
         current.offset,
