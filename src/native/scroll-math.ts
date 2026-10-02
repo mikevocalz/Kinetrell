@@ -60,3 +60,15 @@ export function nearestSnapPoint(
 
   return nearest;
 }
+
+export function sceneIsActive(
+  progress: number,
+  enterAt = 0,
+  leaveAt = 1,
+): boolean {
+  'worklet';
+  const start = clamp01(Math.min(enterAt, leaveAt));
+  const end = clamp01(Math.max(enterAt, leaveAt));
+  const value = clamp01(progress);
+  return value >= start && value <= end;
+}

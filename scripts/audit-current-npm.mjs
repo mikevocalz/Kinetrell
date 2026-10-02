@@ -5,7 +5,7 @@ const registry = 'https://registry.npmjs.org/';
 const observedAt = new Date().toISOString();
 
 const selections = [
-  ['expo', '58.0.1', 'Expo SDK 58 target (next tag)'],
+  ['expo', '58.0.2', 'Expo SDK 58 target (next tag)'],
   ['react', '19.3.0', 'Expo SDK 58 target'],
   ['react-native', '0.87.1', 'strict-npm library validation lane'],
   ['react-native', '0.88.0-rc.3', 'Expo SDK 58 target lane'],
@@ -88,7 +88,7 @@ const report = {
   registry,
   observedAt,
   target: {
-    expoSdk: '58.0.1',
+    expoSdk: '58.0.2',
     react: '19.3.0',
     reactNative: '0.88.0-rc.3',
     reanimated: '4.7.0',
