@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Kinetrell Native Performance",
+    "slug": "kinetrell-native-performance",
+    "version": "0.0.0",
+    "newArchEnabled": true,
+    "platforms": ["ios", "android"]
+  }
+}
