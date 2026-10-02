@@ -18,3 +18,28 @@ import 'lenis/dist/lenis.css';
 ```
 
 The stylesheet is never imported by native/core entry points.
+
+
+## ReactLenis / useLenis interoperability
+
+The Vite showcase includes a separate nested `ReactLenis` provider and reads
+its caller-owned instance through `useKinetrellLenis()`, which delegates to
+the official `useLenis()` hook.
+
+```tsx
+import { ReactLenis, useKinetrellLenis } from 'kinetrell/web/lenis';
+
+function Status() {
+  const lenis = useKinetrellLenis();
+  return <span>{lenis ? 'connected' : 'initializing'}</span>;
+}
+
+<ReactLenis options={{ autoRaf: true }}>
+  <Status />
+  <ScrollableContent />
+</ReactLenis>
+```
+
+This is intentionally a nested/custom scrolling example, so it does not create
+a second root scroller alongside the page-level GSAP/Lenis bridge. Kinetrell
+does not destroy caller-owned `ReactLenis` instances.
