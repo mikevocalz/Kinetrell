@@ -67,7 +67,8 @@
     "check:package": "node scripts/check-package.mjs",
     "pack:check": "npm pack --dry-run",
     "verify": "npm run typecheck && npm run test && npm run build && npm run check:boundaries && npm run check:package && npm run pack:check",
-    "prepublishOnly": "npm run verify"
+    "prepublishOnly": "npm run verify",
+    "verify:consumers": "node scripts/verify-packed-consumers.mjs"
   },
   "peerDependencies": {
     "@gsap/react": ">=2.1.2 <3",

@@ -174,3 +174,21 @@ jobs:
       - name: Verify Vite showcase
         working-directory: examples/web
         run: npm run verify
+
+  verify-packed-consumers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Use current npm
+        run: npm install --global npm@12.2.0
+      - name: Resolve lockfile
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Install library toolchain
+        run: npm ci
+      - name: Build package
+        run: npm run build
+      - name: Verify packed clean consumers
+        run: npm run verify:consumers
