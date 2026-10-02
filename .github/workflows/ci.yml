@@ -91,11 +91,11 @@ jobs:
 
       - name: Typecheck semantic parallax fixture
         working-directory: examples/parallax-anchors
-        run: pnpm run typecheck
+        run: ./node_modules/.bin/tsc --noEmit
 
       - name: Export semantic parallax web build
         working-directory: examples/parallax-anchors
-        run: pnpm exec expo export --platform web --output-dir dist-web
+        run: ./node_modules/.bin/expo export --platform web --output-dir dist-web
 
       - name: Upload semantic parallax lockfile
         if: always()
