@@ -13,40 +13,44 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./core": {
-      "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js"
+      "types": "./dist/core/index.d.mts",
+      "import": "./dist/core/index.mjs"
     },
     "./native": {
-      "types": "./dist/native/index.d.ts",
-      "import": "./dist/native/index.js"
+      "types": "./dist/native/index.d.mts",
+      "import": "./dist/native/index.mjs"
     },
     "./compat/gsap": {
-      "types": "./dist/compat/gsap.d.ts",
-      "import": "./dist/compat/gsap.js"
+      "types": "./dist/compat/gsap.d.mts",
+      "import": "./dist/compat/gsap.mjs"
     },
     "./web/gsap": {
-      "types": "./dist/web/gsap.d.ts",
-      "import": "./dist/web/gsap.js"
+      "types": "./dist/web/gsap.d.mts",
+      "import": "./dist/web/gsap.mjs"
     },
     "./web/lenis": {
-      "types": "./dist/web/lenis.d.ts",
-      "import": "./dist/web/lenis.js"
+      "types": "./dist/web/lenis.d.mts",
+      "import": "./dist/web/lenis.mjs"
     },
     "./web/gsap-lenis": {
-      "types": "./dist/web/gsap-lenis.d.ts",
-      "import": "./dist/web/gsap-lenis.js"
+      "types": "./dist/web/gsap-lenis.d.mts",
+      "import": "./dist/web/gsap-lenis.mjs"
+    },
+    "./native/gesture": {
+      "types": "./dist/native/gesture.d.mts",
+      "import": "./dist/native/gesture.mjs"
     },
     "./core/diagnostics": {
-      "types": "./dist/core/diagnostics.d.ts",
-      "import": "./dist/core/diagnostics.js"
+      "types": "./dist/core/diagnostics.d.mts",
+      "import": "./dist/core/diagnostics.mjs"
     },
     "./dev/inspector": {
-      "types": "./dist/dev/inspector.d.ts",
-      "import": "./dist/dev/inspector.js"
+      "types": "./dist/dev/inspector.d.mts",
+      "import": "./dist/dev/inspector.mjs"
     }
   },
   "scripts": {
@@ -68,7 +72,8 @@
     "react": ">=19.0.0 <20",
     "react-native": ">=0.86.0-0 <0.89.0-0",
     "react-native-reanimated": ">=4.7.0 <5",
-    "react-native-worklets": ">=0.13.0 <0.14"
+    "react-native-worklets": ">=0.13.0 <0.14",
+    "react-native-gesture-handler": ">=3.2.1 <4"
   },
   "peerDependenciesMeta": {
     "@gsap/react": {
@@ -90,6 +95,9 @@
       "optional": true
     },
     "react-native-worklets": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
       "optional": true
     }
   },
