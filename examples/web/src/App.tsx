@@ -4,7 +4,7 @@ import {
   attachScrollTrigger,
   createGsapTimeline,
 } from 'kinetrell/web/gsap';
-import { createKinetrellLenis } from 'kinetrell/web/lenis';
+import { ReactLenis, createKinetrellLenis, useKinetrellLenis } from 'kinetrell/web/lenis';
 import { connectGsapLenis } from 'kinetrell/web/gsap-lenis';
 import 'lenis/dist/lenis.css';
 import './styles.css';
@@ -31,6 +31,48 @@ const heroMotion = defineMotion({
     },
   ],
 });
+
+
+function ReactLenisProbe() {
+  const lenis = useKinetrellLenis();
+
+  return (
+    <div className="react-lenis-status">
+      <strong>ReactLenis / useLenis interop</strong>
+      <span>{lenis ? 'context connected' : 'initializing'}</span>
+    </div>
+  );
+}
+
+function ReactLenisInterop() {
+  return (
+    <section className="react-lenis-section" aria-labelledby="react-lenis-title">
+      <div className="react-lenis-copy">
+        <p className="eyebrow">CALLER-OWNED REACT CONTEXT</p>
+        <h2 id="react-lenis-title">The official ReactLenis path works too.</h2>
+        <p>
+          This nested provider is intentionally separate from the page's root
+          GSAP-driven Lenis instance. Kinetrell re-exports ReactLenis and maps
+          useKinetrellLenis() directly to the official useLenis() hook.
+        </p>
+      </div>
+
+      <ReactLenis options={{ autoRaf: true, smoothWheel: true }}>
+        <div className="react-lenis-box">
+          <ReactLenisProbe />
+          <div className="react-lenis-scroll-content">
+            {Array.from({ length: 8 }, (_, index) => (
+              <div className="react-lenis-card" key={index}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <strong>Nested Lenis content</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ReactLenis>
+    </section>
+  );
+}
 
 export function App() {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -107,6 +149,8 @@ export function App() {
           </div>
         </div>
       </section>
+
+      <ReactLenisInterop />
 
       <section className="outro">
         <h2>No browser physics smuggled into native.</h2>
