@@ -12,6 +12,7 @@ import type { SharedValue } from 'react-native-reanimated';
 import { scheduleOnUI } from 'react-native-worklets';
 import type { NativeMotionHandle } from './runtime.js';
 import {
+  directionalSnapPoint,
   parallaxFromProgress,
   sectionViewportProgress,
 } from './scroll-math.js';
@@ -219,4 +220,49 @@ export function useNativeScrollController(
   }, [commandGeneration]);
 
   return { ref, scrollTo, cancelPending };
+}
+
+export function useNativeSnapController(
+  scroll: KinetrellScrollState,
+  controller: NativeScrollController,
+  points: readonly number[],
+  options: Readonly<{
+    velocityThreshold?: number;
+    animated?: boolean;
+  }> = {},
+) {
+  const pointsRef = useSharedValue([...points]);
+  pointsRef.value = [...points];
+
+  useAnimatedReaction(
+    () => ({
+      dragging: scroll.isDragging.value,
+      velocity: scroll.velocity.value,
+      offset: scroll.offset.value,
+      interaction: scroll.interactionGeneration.value,
+    }),
+    (current, previous) => {
+      if (!previous || previous.dragging || current.dragging) return;
+      if (current.interaction === previous.interaction) return;
+
+      const destination = directionalSnapPoint(
+        current.offset,
+        current.velocity,
+        pointsRef.value,
+        options.velocityThreshold ?? 420,
+      );
+      if (destination === null) return;
+
+      scheduleOnUI(() => {
+        'worklet';
+        if (scroll.interactionGeneration.value !== current.interaction) return;
+        if (scroll.axis === 'y') {
+          reanimatedScrollTo(controller.ref, 0, destination, options.animated ?? true);
+        } else {
+          reanimatedScrollTo(controller.ref, destination, 0, options.animated ?? true);
+        }
+      });
+    },
+    [controller.ref, options.animated, options.velocityThreshold, pointsRef, scroll],
+  );
 }
