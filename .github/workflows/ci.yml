@@ -85,6 +85,13 @@ jobs:
       - name: Install pnpm for Expo preview lane
         run: npm install --global pnpm@12.8.1
 
+      - name: Build Kinetrell for local fixture dependency
+        run: |
+          npm install --global npm@12.2.0
+          npm install --package-lock-only --ignore-scripts
+          npm ci
+          npm run build
+
       - name: Install semantic parallax fixture
         working-directory: examples/parallax-anchors
         run: pnpm install --no-frozen-lockfile
