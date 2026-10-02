@@ -4,3 +4,4 @@ export * from './compile.js';
 export * from './evaluate.js';
 export * from './easing.js';
 export * from './timeline.js';
+export * from './diagnostics.js';
