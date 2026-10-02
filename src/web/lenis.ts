@@ -1,4 +1,7 @@
-import Lenis from 'lenis';
+import Lenis, {
+  type LenisOptions,
+  type ScrollCallback,
+} from 'lenis';
 import {
   ReactLenis,
   useLenis as useUpstreamLenis,
@@ -6,8 +9,7 @@ import {
 
 export { ReactLenis };
 
-export type KinetrellLenisOptions =
-  NonNullable<ConstructorParameters<typeof Lenis>[0]>;
+export type KinetrellLenisOptions = LenisOptions;
 
 export type OwnedLenis = Readonly<{
   lenis: Lenis;
@@ -54,23 +56,16 @@ export function createKinetrellLenis(
 
 export function observeLenis(
   lenis: Lenis,
-  callback: Parameters<Lenis['on']>[1],
+  callback: ScrollCallback,
 ) {
-  const unsubscribe = lenis.on('scroll', callback as never);
-
-  return () => {
-    if (typeof unsubscribe === 'function') {
-      unsubscribe();
-    } else {
-      lenis.off('scroll', callback as never);
-    }
-  };
+  const unsubscribe = lenis.on('scroll', callback);
+  return () => unsubscribe();
 }
 
 export function useKinetrellLenis(
-  callback?: Parameters<typeof useUpstreamLenis>[0],
-  dependencies?: Parameters<typeof useUpstreamLenis>[1],
-  priority?: Parameters<typeof useUpstreamLenis>[2],
+  callback?: ScrollCallback,
+  dependencies: unknown[] = [],
+  priority = 0,
 ) {
   return useUpstreamLenis(callback, dependencies, priority);
 }

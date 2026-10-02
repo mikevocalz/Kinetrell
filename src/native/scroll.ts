@@ -165,9 +165,27 @@ export type NativeScrollController = Readonly<{
  * A thin command adapter around Reanimated's native scrollTo. It never creates
  * a second scroll physics engine and never disables user interaction.
  */
-export function useNativeScrollController(): NativeScrollController {
+export function useNativeScrollController(
+  options: Readonly<{
+    axis?: ScrollAxis;
+    interactionGeneration?: SharedValue<number>;
+  }> = {},
+): NativeScrollController {
   const ref = useAnimatedRef<ScrollView>();
   const commandGeneration = useSharedValue(0);
+  const axis = options.axis ?? 'y';
+  const interactionGeneration = options.interactionGeneration;
+
+  useAnimatedReaction(
+    () => interactionGeneration?.value ?? 0,
+    (current, previous) => {
+      if (previous !== null && current !== previous) {
+        // A native user interaction invalidates any queued Kinetrell command.
+        commandGeneration.value += 1;
+      }
+    },
+    [interactionGeneration],
+  );
 
   const scrollTo = useCallback(
     (
@@ -186,10 +204,14 @@ export function useNativeScrollController(): NativeScrollController {
       scheduleOnUI(() => {
         'worklet';
         if (commandGeneration.value !== generation) return;
-        reanimatedScrollTo(ref, crossOffset, offset, animated);
+        if (axis === 'y') {
+          reanimatedScrollTo(ref, crossOffset, offset, animated);
+        } else {
+          reanimatedScrollTo(ref, offset, crossOffset, animated);
+        }
       });
     },
-    [commandGeneration, ref],
+    [axis, commandGeneration, ref],
   );
 
   const cancelPending = useCallback(() => {

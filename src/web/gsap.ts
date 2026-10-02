@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { DependencyList } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -124,11 +124,9 @@ export function useGsapMotion(
       timelineRef.current = timeline;
 
       if (options.autoplay) timeline.play();
-
-      return () => {
-        timeline.kill();
-        if (timelineRef.current === timeline) timelineRef.current = null;
-      };
+      // @gsap/react records the timeline in its GSAP context and reverts that
+      // context on dependency changes/unmount. Do not layer a second cleanup
+      // contract inside the callback.
     },
     {
       dependencies: [
@@ -139,6 +137,13 @@ export function useGsapMotion(
       ],
       revertOnUpdate: true,
     },
+  );
+
+  useEffect(
+    () => () => {
+      timelineRef.current = null;
+    },
+    [],
   );
 
   return timelineRef;

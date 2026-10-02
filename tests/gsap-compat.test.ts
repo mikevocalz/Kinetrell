@@ -23,7 +23,7 @@ describe('GSAP compatibility recorder', () => {
         tl.addLabel('intro', 0.25);
         tl.to('a', { x: 10, duration: 0.5 }, 'intro');
         tl.to('b', { x: 20, duration: 0.25 }, '<+=0.1');
-        tl.to('c', { x: 30, duration: 0.2 }, '>-0.1');
+        tl.to('c', { x: 30, duration: 0.2 }, '>-=0.1');
       },
     );
 
