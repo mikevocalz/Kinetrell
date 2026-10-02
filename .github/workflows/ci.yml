@@ -111,6 +111,45 @@ jobs:
           path: benchmarks/results/host-core.json
           if-no-files-found: error
 
+  verify-semantic-parallax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm for Expo preview lane
+        run: npm install --global pnpm@12.8.1
+
+      - name: Build Kinetrell for local fixture dependency
+        run: |
+          npm install --global npm@12.2.0
+          npm install --package-lock-only --ignore-scripts
+          npm ci
+          npm run build
+
+      - name: Install semantic parallax fixture
+        working-directory: examples/parallax-anchors
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Typecheck semantic parallax fixture
+        working-directory: examples/parallax-anchors
+        run: ./node_modules/.bin/tsc --noEmit
+
+      - name: Export semantic parallax web build
+        working-directory: examples/parallax-anchors
+        run: ./node_modules/.bin/expo export --platform web --output-dir dist-web
+
+      - name: Upload semantic parallax lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semantic-parallax-pnpm-lock
+          path: examples/parallax-anchors/pnpm-lock.yaml
+          if-no-files-found: warn
+
   verify-web-showcase:
     runs-on: ubuntu-latest
     steps:
