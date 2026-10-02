@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import type { ScrollView } from 'react-native';
 import {
   scrollTo as reanimatedScrollTo,
@@ -12,6 +12,7 @@ import type { SharedValue } from 'react-native-reanimated';
 import { scheduleOnUI } from 'react-native-worklets';
 import type { NativeMotionHandle } from './runtime.js';
 import {
+  directionalSnapPoint,
   parallaxFromProgress,
   sectionViewportProgress,
 } from './scroll-math.js';
@@ -219,4 +220,74 @@ export function useNativeScrollController(
   }, [commandGeneration]);
 
   return { ref, scrollTo, cancelPending };
+}
+
+export type NativeSnapController = Readonly<{
+  snap: (options?: Readonly<{
+    offset?: number;
+    velocity?: number;
+    animated?: boolean;
+  }>) => void;
+}>;
+
+/**
+ * Imperative snap command. Call from the host's settle point (for example after
+ * momentum end) rather than installing a second physics owner.
+ */
+export function useNativeSnapController(
+  scroll: KinetrellScrollState,
+  controller: NativeScrollController,
+  points: readonly number[],
+  options: Readonly<{
+    velocityThreshold?: number;
+    animated?: boolean;
+  }> = {},
+): NativeSnapController {
+  const pointsRef = useSharedValue([...points]);
+  pointsRef.value = [...points];
+
+  const snap = useCallback(
+    (
+      command: Readonly<{
+        offset?: number;
+        velocity?: number;
+        animated?: boolean;
+      }> = {},
+    ) => {
+      const explicitOffset = command.offset;
+      const explicitVelocity = command.velocity;
+      const animated = command.animated ?? options.animated ?? true;
+      const threshold = options.velocityThreshold ?? 420;
+
+      scheduleOnUI(() => {
+        'worklet';
+        const offset = explicitOffset ?? scroll.offset.value;
+        const velocity = explicitVelocity ?? scroll.velocity.value;
+        const destination = directionalSnapPoint(
+          offset,
+          velocity,
+          pointsRef.value,
+          threshold,
+        );
+        if (destination === null) return;
+
+        if (scroll.axis === 'y') {
+          reanimatedScrollTo(controller.ref, 0, destination, animated);
+        } else {
+          reanimatedScrollTo(controller.ref, destination, 0, animated);
+        }
+      });
+    },
+    [
+      controller.ref,
+      options.animated,
+      options.velocityThreshold,
+      pointsRef,
+      scroll.axis,
+      scroll.offset,
+      scroll.velocity,
+    ],
+  );
+
+  return { snap };
 }
