@@ -1,10 +1,13 @@
 import { applyEase } from './easing.js';
+import { interpolateColorValue } from './color.js';
 import type { CompiledMotion, CompiledTrack, MotionState, MotionValue } from './types.js';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 function interpolateValue(from: MotionValue | undefined, to: MotionValue, t: number): MotionValue {
   if (typeof from === 'number' && typeof to === 'number') return lerp(from, to, t);
+  const color = interpolateColorValue(from, to, t);
+  if (color !== null) return color;
   return t < 1 ? (from ?? to) : to;
 }
 
