@@ -102,7 +102,7 @@ jobs:
 
       - name: Typecheck native performance fixture
         working-directory: examples/native-performance
-        run: pnpm run typecheck
+        run: ./node_modules/.bin/tsc --noEmit
 
       - name: Upload host benchmark result
         uses: actions/upload-artifact@v4
