@@ -175,6 +175,14 @@ jobs:
         working-directory: examples/web
         run: npm run verify
 
+      - name: Install Playwright browsers
+        working-directory: examples/web
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Run browser interaction tests
+        working-directory: examples/web
+        run: npm run test:e2e
+
   verify-packed-consumers:
     runs-on: ubuntu-latest
     steps:
@@ -192,6 +200,7 @@ jobs:
         run: npm run build
       - name: Verify packed clean consumers
         run: npm run verify:consumers
+
 
   verify-next-ssr:
     runs-on: ubuntu-latest
