@@ -14,15 +14,17 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: [
-    'react',
-    'react-native',
-    'react-native-reanimated',
-    'react-native-worklets',
-    'gsap',
-    'gsap/ScrollTrigger',
-    '@gsap/react',
-    'lenis',
-    'lenis/react',
-  ],
+  deps: {
+    neverBundle: [
+      'react',
+      'react-native',
+      'react-native-reanimated',
+      'react-native-worklets',
+      'gsap',
+      'gsap/ScrollTrigger',
+      '@gsap/react',
+      'lenis',
+      'lenis/react',
+    ],
+  },
 });
