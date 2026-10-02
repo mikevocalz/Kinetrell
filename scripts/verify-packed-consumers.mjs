@@ -44,8 +44,11 @@ function createProject(name) {
 let tarballPath;
 
 try {
+  // Git installs need the prepare lifecycle so dist is generated from a pinned
+  // commit. The packed-consumer test has already built dist explicitly, so
+  // suppress lifecycle scripts during npm pack to keep --json output machine-readable.
   const packed = JSON.parse(
-    execFileSync(npm, ['pack', '--json'], {
+    execFileSync(npm, ['pack', '--json', '--ignore-scripts'], {
       cwd: root,
       encoding: 'utf8',
       timeout: 60_000,
