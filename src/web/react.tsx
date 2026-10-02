@@ -1,5 +1,6 @@
 import {
   createContext,
+  createElement,
   forwardRef,
   useCallback,
   useContext,
@@ -9,7 +10,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithoutRef,
-  type ElementRef,
+  type JSX,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -133,22 +134,21 @@ function useTargetRegistration<T extends HTMLElement>(
   );
 }
 
-type MotionProps<T extends keyof JSX.IntrinsicElements> =
+type IntrinsicTag = keyof JSX.IntrinsicElements;
+
+type MotionProps<T extends IntrinsicTag> =
   ComponentPropsWithoutRef<T> & { target: string };
 
-function createMotionElement<T extends keyof JSX.IntrinsicElements>(tag: T) {
-  type Element = ElementRef<T>;
-
-  return forwardRef<Element, MotionProps<T>>(function MotionElement(
+function createMotionElement<T extends IntrinsicTag>(tag: T) {
+  return forwardRef<HTMLElement, MotionProps<T>>(function MotionElement(
     { target, ...props },
     ref,
   ) {
-    const registeredRef = useTargetRegistration(
-      target,
-      ref as Ref<HTMLElement>,
-    );
-    const Tag = tag as keyof JSX.IntrinsicElements;
-    return <Tag {...props} ref={registeredRef} />;
+    const registeredRef = useTargetRegistration<HTMLElement>(target, ref);
+    return createElement(tag, {
+      ...props,
+      ref: registeredRef,
+    } as ComponentPropsWithoutRef<T> & { ref: Ref<HTMLElement> });
   });
 }
 
