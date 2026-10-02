@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { compileMotion, defineMotion } from 'kinetrell/core';
 import { createGsapTimeline, attachScrollTrigger } from 'kinetrell/web/gsap';
 import {
@@ -25,13 +25,10 @@ const motion = compileMotion(
 function Scene() {
   const cardRef = useRef<HTMLDivElement>(null);
   const lenis = useKinetrellLenis();
-  const targets = useMemo(
-    () => (cardRef.current ? { card: cardRef.current } : null),
-    [cardRef.current],
-  );
 
   useEffect(() => {
-    if (!lenis || !targets) return;
+    const card = cardRef.current;
+    if (!lenis || !card) return;
 
     // ReactLenis owns RAF. Kinetrell only subscribes ScrollTrigger updates.
     const disconnect = connectGsapLenis(lenis, {
@@ -39,9 +36,13 @@ function Scene() {
       refreshOnConnect: true,
     });
 
-    const timeline = createGsapTimeline(motion, targets, { paused: true });
+    const timeline = createGsapTimeline(
+      motion,
+      { card },
+      { paused: true },
+    );
     const trigger = attachScrollTrigger(timeline, {
-      trigger: cardRef.current,
+      trigger: card,
       start: 'top 85%',
       end: 'top 35%',
       scrub: true,
@@ -52,7 +53,7 @@ function Scene() {
       timeline.kill();
       disconnect();
     };
-  }, [lenis, targets]);
+  }, [lenis]);
 
   return (
     <main className="page">
