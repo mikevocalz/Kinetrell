@@ -47,6 +47,14 @@
     "./web/react": {
       "types": "./dist/web/react.d.mts",
       "import": "./dist/web/react.mjs"
+    },
+    "./core/diagnostics": {
+      "types": "./dist/core/diagnostics.d.mts",
+      "import": "./dist/core/diagnostics.mjs"
+    },
+    "./dev/inspector": {
+      "types": "./dist/dev/inspector.d.mts",
+      "import": "./dist/dev/inspector.mjs"
     }
   },
   "scripts": {
