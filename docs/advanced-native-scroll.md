@@ -8,8 +8,9 @@ physics engine.
   next/previous point after a decisive fling.
 - `logicalScrollOffset()` converts horizontal physical offsets into a
   direction-independent logical coordinate for RTL choreography.
-- `useNativeSnapController()` is opt-in and should not be combined with native
-  `snapToOffsets` on the same axis. One snap owner only.
+- `useNativeSnapController()` is opt-in and imperative: call `snap()` from the
+  host's chosen settle point (for example after momentum end). Do not combine it
+  with native `snapToOffsets` on the same axis. One snap owner only.
 
 User drag generations invalidate queued programmatic commands so Kinetrell does
 not fight a new touch interaction.
