@@ -43,6 +43,10 @@
     "./native/gesture": {
       "types": "./dist/native/gesture.d.mts",
       "import": "./dist/native/gesture.mjs"
+    },
+    "./web/react": {
+      "types": "./dist/web/react.d.mts",
+      "import": "./dist/web/react.mjs"
     }
   },
   "scripts": {
