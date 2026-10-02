@@ -1,0 +1,33 @@
+name: ReactLenis example
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'examples/react-lenis/**'
+      - 'src/web/lenis.ts'
+      - 'src/web/gsap-lenis.ts'
+      - 'src/web/gsap.ts'
+      - '.github/workflows/react-lenis.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build Kinetrell
+        run: |
+          npm install --global npm@12.2.0
+          npm install --package-lock-only --ignore-scripts
+          npm ci
+          npm run build
+      - name: Install fixture
+        working-directory: examples/react-lenis
+        run: npm install --ignore-scripts
+      - name: Verify fixture
+        working-directory: examples/react-lenis
+        run: npm run verify
