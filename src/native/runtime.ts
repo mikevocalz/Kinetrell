@@ -7,6 +7,7 @@ import {
   withTiming,
 } from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
+import { AppState } from 'react-native';
 import { scheduleOnRN } from 'react-native-worklets';
 import {
   useCallback,
@@ -20,6 +21,7 @@ import type {
   MotionDefinition,
 } from '../core/types.js';
 import { createNativeTargetPlan } from './plan.js';
+import { reducedMotionDestination, type ReducedMotionBehavior } from './lifecycle.js';
 import {
   evaluateNativePlan,
   valuesToAnimatedStyle,
@@ -31,6 +33,8 @@ export type NativeMotionOptions = Readonly<{
   autoplay?: boolean;
   playbackRate?: number;
   reducedMotion?: ReducedMotionPolicy;
+  reducedMotionBehavior?: ReducedMotionBehavior;
+  pauseOnBackground?: boolean;
   onComplete?: () => void;
 }>;
 
@@ -60,6 +64,7 @@ export function useMotion(
   const directionRef = useRef<1 | -1>(1);
   const playingRef = useRef(false);
   const onCompleteRef = useRef(options.onComplete);
+  const resumeAfterBackgroundRef = useRef(false);
 
   onCompleteRef.current = options.onComplete;
 
@@ -181,8 +186,62 @@ export function useMotion(
   }, [playheadMs]);
 
   useEffect(() => {
+    if (!shouldReduceMotion) return;
+
+    const wasPlaying = playingRef.current;
+    cancelAnimation(playheadMs);
+    playingRef.current = false;
+
+    const destination = reducedMotionDestination(
+      playheadMs.value,
+      compiled.durationMs,
+      directionRef.current,
+      options.reducedMotionBehavior ?? 'finish',
+    );
+    playheadMs.value = destination;
+
+    if (
+      wasPlaying &&
+      (options.reducedMotionBehavior ?? 'finish') === 'finish'
+    ) {
+      onCompleteRef.current?.();
+    }
+  }, [
+    compiled.durationMs,
+    options.reducedMotionBehavior,
+    playheadMs,
+    shouldReduceMotion,
+  ]);
+
+  useEffect(() => {
+    if (options.pauseOnBackground === false) return;
+
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') {
+        resumeAfterBackgroundRef.current = playingRef.current;
+        if (playingRef.current) {
+          cancelAnimation(playheadMs);
+          playingRef.current = false;
+        }
+        return;
+      }
+
+      if (resumeAfterBackgroundRef.current) {
+        resumeAfterBackgroundRef.current = false;
+        resume();
+      }
+    });
+
+    return () => subscription.remove();
+  }, [options.pauseOnBackground, playheadMs, resume]);
+
+  useEffect(() => {
     if (options.autoplay) play();
-    return () => cancelAnimation(playheadMs);
+    return () => {
+      resumeAfterBackgroundRef.current = false;
+      playingRef.current = false;
+      cancelAnimation(playheadMs);
+    };
   }, [options.autoplay, play, playheadMs]);
 
   return useMemo(

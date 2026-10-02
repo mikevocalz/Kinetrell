@@ -5,3 +5,5 @@ export * from './evaluate.js';
 export * from './easing.js';
 export * from './timeline.js';
 export * from './diagnostics.js';
+export * from './color.js';
+export * from './keyframes.js';
