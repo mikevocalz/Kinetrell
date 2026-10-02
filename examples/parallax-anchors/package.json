@@ -13,7 +13,7 @@
   "dependencies": {
     "@expo/html-elements": "58.0.2",
     "@nandorojo/anchor": "0.4.3",
-    "expo": "58.0.1",
+    "expo": "58.0.2",
     "kinetrell": "file:../..",
     "react": "19.3.0",
     "react-dom": "19.3.0",
