@@ -51,7 +51,8 @@
     "check:package": "node scripts/check-package.mjs",
     "pack:check": "npm pack --dry-run",
     "verify": "npm run typecheck && npm run test && npm run build && npm run check:boundaries && npm run check:package && npm run pack:check",
-    "prepublishOnly": "npm run verify"
+    "prepublishOnly": "npm run verify",
+    "verify:consumers": "node scripts/verify-packed-consumers.mjs"
   },
   "peerDependencies": {
     "@gsap/react": ">=2.1.2 <3",
@@ -63,13 +64,27 @@
     "react-native-worklets": ">=0.13.0 <0.14"
   },
   "peerDependenciesMeta": {
-    "@gsap/react": { "optional": true },
-    "gsap": { "optional": true },
-    "lenis": { "optional": true },
-    "react": { "optional": true },
-    "react-native": { "optional": true },
-    "react-native-reanimated": { "optional": true },
-    "react-native-worklets": { "optional": true }
+    "@gsap/react": {
+      "optional": true
+    },
+    "gsap": {
+      "optional": true
+    },
+    "lenis": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-worklets": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@gsap/react": "2.1.2",
