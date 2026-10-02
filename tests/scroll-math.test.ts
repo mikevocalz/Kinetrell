@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   nearestSnapPoint,
+  sceneIsActive,
   normalizeRange,
   parallaxFromProgress,
   sectionViewportProgress,
@@ -31,5 +32,19 @@ describe('scroll choreography math', () => {
     expect(nearestSnapPoint(132, [0, 100, 250])).toBe(100);
     expect(nearestSnapPoint(200, [0, 100, 250])).toBe(250);
     expect(nearestSnapPoint(10, [])).toBeNull();
+  });
+});
+
+
+describe('sceneIsActive', () => {
+  it('uses inclusive bounded progress thresholds', () => {
+    expect(sceneIsActive(0.2, 0.2, 0.8)).toBe(true);
+    expect(sceneIsActive(0.5, 0.2, 0.8)).toBe(true);
+    expect(sceneIsActive(0.81, 0.2, 0.8)).toBe(false);
+  });
+
+  it('normalizes reversed and out-of-range thresholds', () => {
+    expect(sceneIsActive(0.25, 0.9, 0.2)).toBe(true);
+    expect(sceneIsActive(0, -1, 2)).toBe(true);
   });
 });

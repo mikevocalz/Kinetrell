@@ -1,9 +1,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 
 const files = [
-  'dist/index.js',
-  'dist/core/index.js',
-  'dist/native/index.js',
+  'dist/index.mjs',
+  'dist/core/index.mjs',
+  'dist/native/index.mjs',
 ];
 
 const browserOnlyFragments = [
