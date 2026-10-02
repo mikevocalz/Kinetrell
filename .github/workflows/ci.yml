@@ -72,3 +72,41 @@ jobs:
           name: expo58-pnpm-lock
           path: examples/expo58/pnpm-lock.yaml
           if-no-files-found: warn
+
+  verify-native-performance-fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Use current npm and pnpm
+        run: |
+          npm install --global npm@12.2.0
+          npm install --global pnpm@12.8.1
+
+      - name: Install and build Kinetrell
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          npm ci
+          npm run build
+
+      - name: Run host compiler/evaluator benchmark
+        run: node benchmarks/core.mjs
+
+      - name: Install native performance fixture
+        working-directory: examples/native-performance
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Typecheck native performance fixture
+        working-directory: examples/native-performance
+        run: pnpm run typecheck
+
+      - name: Upload host benchmark result
+        uses: actions/upload-artifact@v4
+        with:
+          name: kinetrell-host-core-benchmark
+          path: benchmarks/results/host-core.json
+          if-no-files-found: error
