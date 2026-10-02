@@ -69,7 +69,8 @@
     "verify": "npm run typecheck && npm run test && npm run build && npm run check:boundaries && npm run check:package && npm run check:exclusions && npm run pack:check",
     "prepublishOnly": "npm run verify",
     "verify:consumers": "node scripts/verify-packed-consumers.mjs",
-    "check:exclusions": "node scripts/check-excluded-dependencies.mjs"
+    "check:exclusions": "node scripts/check-excluded-dependencies.mjs",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "@gsap/react": ">=2.1.2 <3",
