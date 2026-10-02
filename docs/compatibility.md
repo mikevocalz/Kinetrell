@@ -2,7 +2,7 @@
 
 Kinetrell's **product target** is Expo SDK 58 with the versions currently published by Expo:
 
-- Expo SDK: **58.0.1** (`next`)
+- Expo SDK: **58.0.2** (`next`)
 - React: **19.3.0**
 - React Native: **0.88.0-rc.3**
 - React Native Reanimated: **4.7.0**
