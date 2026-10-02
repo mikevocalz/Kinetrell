@@ -29,3 +29,18 @@ documented instead of bypassed with force flags.
 CI does not prove native 60/120 Hz performance, gesture feel, platform scroll
 physics, App Store behavior or device-specific layout-animation correctness.
 Those remain explicit release gates for a stable version.
+
+
+## Packed consumer matrix
+
+`npm run verify:consumers` packs the actual publishable tarball and installs it
+into fresh temporary projects. It verifies:
+
+- core-only import with optional peers omitted;
+- Lenis-only browser import without GSAP;
+- GSAP-only browser import without Lenis;
+- combined GSAP + Lenis browser imports;
+- a clean native TypeScript consumer using React Native/Reanimated/Worklets.
+
+This is intentionally stronger than workspace imports because every consumer
+resolves Kinetrell through the packed artifact.

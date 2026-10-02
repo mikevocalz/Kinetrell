@@ -4,10 +4,13 @@ export default defineConfig({
   entry: [
     'src/index.ts',
     'src/core/index.ts',
+    'src/core/diagnostics.ts',
+    'src/dev/inspector.ts',
     'src/native/index.ts',
     'src/native/gesture.ts',
     'src/compat/gsap.ts',
     'src/web/gsap.ts',
+    'src/web/react.tsx',
     'src/web/lenis.ts',
     'src/web/gsap-lenis.ts',
   ],
