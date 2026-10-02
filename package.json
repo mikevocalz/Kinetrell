@@ -13,32 +13,32 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./core": {
-      "types": "./dist/core/index.d.ts",
-      "import": "./dist/core/index.js"
+      "types": "./dist/core/index.d.mts",
+      "import": "./dist/core/index.mjs"
     },
     "./native": {
-      "types": "./dist/native/index.d.ts",
-      "import": "./dist/native/index.js"
+      "types": "./dist/native/index.d.mts",
+      "import": "./dist/native/index.mjs"
     },
     "./compat/gsap": {
-      "types": "./dist/compat/gsap.d.ts",
-      "import": "./dist/compat/gsap.js"
+      "types": "./dist/compat/gsap.d.mts",
+      "import": "./dist/compat/gsap.mjs"
     },
     "./web/gsap": {
-      "types": "./dist/web/gsap.d.ts",
-      "import": "./dist/web/gsap.js"
+      "types": "./dist/web/gsap.d.mts",
+      "import": "./dist/web/gsap.mjs"
     },
     "./web/lenis": {
-      "types": "./dist/web/lenis.d.ts",
-      "import": "./dist/web/lenis.js"
+      "types": "./dist/web/lenis.d.mts",
+      "import": "./dist/web/lenis.mjs"
     },
     "./web/gsap-lenis": {
-      "types": "./dist/web/gsap-lenis.d.ts",
-      "import": "./dist/web/gsap-lenis.js"
+      "types": "./dist/web/gsap-lenis.d.mts",
+      "import": "./dist/web/gsap-lenis.mjs"
     }
   },
   "scripts": {
