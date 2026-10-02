@@ -72,3 +72,33 @@ jobs:
           name: expo58-pnpm-lock
           path: examples/expo58/pnpm-lock.yaml
           if-no-files-found: warn
+
+  verify-next-ssr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Use current npm
+        run: npm install --global npm@12.2.0
+
+      - name: Install and build Kinetrell
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          npm ci
+          npm run build
+
+      - name: Install Next.js SSR fixture
+        working-directory: examples/next-ssr
+        run: npm install --ignore-scripts
+
+      - name: Install Chromium
+        working-directory: examples/next-ssr
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify SSR and hydration
+        working-directory: examples/next-ssr
+        run: npm run test:e2e
