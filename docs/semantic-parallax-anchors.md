@@ -46,4 +46,4 @@ This avoids maintaining two independent scroll positions.
 
 `@nandorojo/anchor` is intentionally an **example dependency**, not a Kinetrell peer or runtime dependency. Its latest published package is 0.4.3 and the upstream repository has not had a new commit since March 2023, so Kinetrell should prove compatibility in the example/CI lane without coupling the core library to it.
 
-For Expo SDK 58, this example pins the current published SDK 58 lane used by the repository and `@expo/html-elements@58.0.2`, the currently published `next` build at the time this example was authored. Re-check npm before future dependency updates.
+For Expo SDK 58, this example pins the versions Expo 58.0.23 bundles and `@expo/html-elements@58.0.3`, npm `latest` on 2026-11-04. Re-check npm before future dependency updates.

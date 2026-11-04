@@ -1,6 +1,6 @@
 # Verification
 
-CI has two lanes.
+CI has one native lane. The library and the Expo SDK 58 fixture install in the same job with strict npm peers.
 
 ## Library lane
 
@@ -15,14 +15,16 @@ It runs:
 - package export checks
 - npm pack dry run
 
-## Expo SDK 58 lane
+## Expo SDK 58 fixture (same job)
 
-Pins Expo 58.0.1 + React 19.3.0 + RN 0.88.0-rc.3 + Reanimated 4.7.0 +
-Worklets 0.13.0 and typechecks the fixture.
+After `npm run verify`, the library job runs `npm install --ignore-scripts` and
+`npm run typecheck` in `examples/expo58`. That fixture pins Expo 58.0.23 +
+React 19.3.0 + RN 0.88.1 + Reanimated 4.7.1 + Worklets 0.13.0 + Gesture
+Handler ~3.3.0, the versions Expo 58.0.23 bundles.
 
-pnpm is used only for this preview fixture because npm currently rejects the
-RN prerelease against Reanimated's published peer range. The mismatch is
-documented instead of bypassed with force flags.
+Before 0.1.0-alpha.2 this was a separate pnpm job, because npm rejected the
+RN 0.88.0-rc.3 prerelease against Reanimated's `0.86 - 0.88` peer range.
+RN 0.88.1 is stable, so that workaround is gone.
 
 ## Not yet equivalent to physical-device validation
 

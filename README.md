@@ -7,7 +7,7 @@ Kinetrell maps a deterministic motion/timeline model to React Native Reanimated 
 ## Scope
 
 - GSAP-style authoring subset: `to`, `from`, `fromTo`, `set`, labels, sequencing, overlap, repeat/yoyo.
-- Native runtime building blocks for Reanimated 4.7+ and Worklets 0.13+, with an Expo SDK 58 / RN 0.88.0-rc.3 reference lane.
+- Native runtime building blocks for Reanimated 4.7+ and Worklets 0.13+, with an Expo SDK 58 / RN 0.88.1 reference lane.
 - Native scroll state for Lenis-like choreography while preserving native scrolling.
 - Real GSAP and Lenis browser adapters.
 - No Bento. No Tamagui. No UI kit.
@@ -57,14 +57,14 @@ const motion = recordGsap({ panel: { opacity: 0, y: 24 } }, (tl) => {
 
 ## Reanimated 4.7 awareness
 
-Kinetrell targets Reanimated 4.7 / Worklets 0.13 and its primary fixture is Expo SDK 58 + React Native 0.88.0-rc.3. It explicitly uses the new `backgroundImage` gradient path and accounts for the default light-tree layout engine, `contrastColor`, experimental shared-element/platform-transition capabilities, RN 0.88 changes, and recent Worklets runtime improvements. Experimental shared-element and Android platform CSS-transition flags are **not** enabled automatically.
+Kinetrell targets Reanimated 4.7 / Worklets 0.13 and its primary fixture is Expo SDK 58 + React Native 0.88.1. It explicitly uses the new `backgroundImage` gradient path and accounts for the default light-tree layout engine, `contrastColor`, experimental shared-element/platform-transition capabilities, RN 0.88 changes, and recent Worklets runtime improvements. Experimental shared-element and Android platform CSS-transition flags are **not** enabled automatically.
 
 See `docs/reanimated-4.7.md`.
 
 
 ## Expo SDK 58 reference lane
 
-`examples/expo58` pins the current SDK 58 lane: Expo 58.0.2, React 19.3.0, React Native 0.88.0-rc.3, Reanimated 4.7.0, Worklets 0.13.0, and Gesture Handler 3.2.1. It includes a Reanimated 4.7 animated-gradient example.
+`examples/expo58` pins the versions Expo 58.0.23 bundles: React 19.3.0, React Native 0.88.1, Reanimated 4.7.1, Worklets 0.13.0, and Gesture Handler ~3.3.0. It includes a Reanimated 4.7 animated-gradient example.
 
 
 ## Cross-platform semantic parallax

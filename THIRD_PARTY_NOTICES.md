@@ -6,7 +6,7 @@ Worklets, or React Native Gesture Handler.
 ## GSAP
 
 Kinetrell's browser adapters integrate the separately installed `gsap` and
-`@gsap/react` packages. As of October 2, 2026, npm publishes GSAP 3.15.0 under
+`@gsap/react` packages. As of November 4, 2026, npm publishes GSAP 3.15.1 under
 GreenSock/Webflow's Standard "No Charge" License.
 
 The current license permits implementation/use on websites, web applications,

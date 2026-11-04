@@ -1,41 +1,59 @@
-# Compatibility baseline (2026-10-01)
+# Compatibility baseline (2026-11-04)
 
-Kinetrell's **product target** is Expo SDK 58 with the versions currently published by Expo:
+Versions below come from `node scripts/audit-current-npm.mjs` run on
+2026-11-04 against registry.npmjs.org, and from `bundledNativeModules.json`
+inside the published `expo@58.0.23` tarball.
 
-- Expo SDK: **58.0.2** (`next`)
-- React: **19.3.0**
-- React Native: **0.88.0-rc.3**
-- React Native Reanimated: **4.7.0**
-- React Native Worklets: **0.13.0**
-- React Native Gesture Handler: **3.2.1**
+## Native lane
 
-The browser integrations currently target:
+Expo SDK 58 is stable (`expo@latest` is 58.0.23) and ships stable React
+Native 0.88.1.
 
-- GSAP: **3.15.0**
+| Package | Library devDependency | Expo SDK 58 fixtures |
+| --- | --- | --- |
+| expo | n/a | 58.0.23 |
+| react | 19.3.0 | 19.3.0 |
+| react-native | 0.88.1 | 0.88.1 |
+| react-native-reanimated | 4.7.1 | 4.7.1 |
+| react-native-worklets | 0.13.1 | 0.13.0 |
+| react-native-gesture-handler | 3.4.0 | ~3.3.0 |
+
+The library pins npm `latest`. The Expo fixtures pin what Expo 58.0.23
+bundles, which is what `npx expo install --fix` writes, so an Expo app built
+from them does not trip `expo-doctor` version warnings. Both columns satisfy
+Kinetrell's peer ranges.
+
+## Browser lane
+
+- GSAP: **3.15.1**
 - @gsap/react: **2.1.2**
-- Lenis: **1.3.26**
+- Lenis: **1.3.27**
 
-## Why CI has two native lanes
+## One native CI lane
 
-Reanimated 4.7 officially documents React Native 0.86-0.88 support and pairs
-with Worklets 0.13.x. Expo SDK 58 currently publishes React Native
-0.88.0-rc.3.
-
-However, Reanimated 4.7.0's npm peer metadata is `react-native: "0.86 - 0.88"`.
-npm's strict resolver does not consider the prerelease
-`0.88.0-rc.3` to satisfy that range, so a plain npm install fails with
-`ERESOLVE` even though this is the combination Expo itself publishes.
-
-Kinetrell therefore keeps:
-
-1. a strict **npm library validation lane** on React Native 0.87.1 + Reanimated
-   4.7.0, with no peer bypass flags; and
-2. an **Expo SDK 58 target fixture** on RN 0.88.0-rc.3 using pnpm, which reports
-   the upstream peer mismatch without blocking the preview combination.
+Reanimated 4.7.1 declares `react-native: "0.86 - 0.88"` and
+`react-native-worklets: "0.13.x"`. React Native 0.88.1 is a stable release, so
+npm's strict resolver accepts it. CI installs the library and the
+`examples/expo58` fixture with plain `npm install` in the same job, with no
+peer bypass flags.
 
 We do not use `--force`, `--legacy-peer-deps`, or a patched Reanimated
-package to hide the mismatch.
+package anywhere.
 
-Kinetrell's own React Native peer range uses
-`>=0.86.0-0 <0.89.0-0` so supported 0.88 prereleases are not rejected by
-Kinetrell itself.
+## Peer ranges
+
+No peer range changed in 0.1.0-alpha.2. Every audited `latest` already falls
+inside the published range:
+
+- `react-native`: `>=0.86.0-0 <0.89.0-0` (0.88.1 is inside)
+- `react-native-reanimated`: `>=4.7.0 <5` (4.7.1)
+- `react-native-worklets`: `>=0.13.0 <0.14` (0.13.1). The `<0.14` ceiling
+  stays because Reanimated 4.7.1's own peer metadata still says `0.13.x`.
+- `react-native-gesture-handler`: `>=3.2.1 <4` (3.4.0)
+- `gsap`: `>=3.15.0 <4` (3.15.1)
+- `@gsap/react`: `>=2.1.2 <3` (2.1.2)
+- `lenis`: `>=1.3.26 <2` (1.3.27)
+
+The `<0.89.0-0` ceiling also rejects React Native 0.89 release candidates
+(`react-native@next` is 0.89.0-rc.0 today), which Reanimated 4.7 does not
+declare support for.
