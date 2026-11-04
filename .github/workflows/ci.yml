@@ -35,6 +35,14 @@ jobs:
       - name: Verify library
         run: npm run verify
 
+      - name: Install Expo SDK 58 fixture (strict npm peers)
+        working-directory: examples/expo58
+        run: npm install --ignore-scripts
+
+      - name: Typecheck Expo SDK 58 fixture
+        working-directory: examples/expo58
+        run: npm run typecheck
+
       - name: Upload generated lockfile
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,34 +57,6 @@ jobs:
         with:
           name: dependency-audit
           path: docs/dependency-audit.json
-          if-no-files-found: warn
-
-  verify-expo58:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install pnpm for Expo preview lane
-        run: npm install --global pnpm@12.8.1
-
-      - name: Install Expo SDK 58 fixture
-        working-directory: examples/expo58
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Typecheck Expo SDK 58 fixture
-        working-directory: examples/expo58
-        run: pnpm run typecheck
-
-      - name: Upload Expo lockfile
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: expo58-pnpm-lock
-          path: examples/expo58/pnpm-lock.yaml
           if-no-files-found: warn
 
   verify-native-performance-fixture:
@@ -126,7 +106,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install pnpm for Expo preview lane
+      - name: Install pnpm for Expo fixture
         run: npm install --global pnpm@12.8.1
 
       - name: Build Kinetrell for local fixture dependency

@@ -13,11 +13,14 @@ Only hardware/final-release gates remain:
 
 - execute the native performance fixture on physical iOS hardware in release mode;
 - execute the native performance fixture on physical Android hardware in release mode;
-- re-run the live npm dependency audit immediately before tagging;
-- revisit the Expo SDK 58 RN 0.88 prerelease peer workaround when the matching
-  stable Expo/RN/Reanimated lane is published.
+- re-run the live npm dependency audit immediately before tagging.
 
-GSAP 3.15.0's current Standard "No Charge" License has been reviewed and the
+The Expo SDK 58 RN 0.88 prerelease peer workaround is gone as of
+0.1.0-alpha.2: Expo 58.0.23 ships stable RN 0.88.1, and CI installs the library
+and the Expo fixture in one strict-npm lane. `docs/native-performance-fixture.md`
+has the device commands and an empty results table.
+
+GSAP 3.15.1's current Standard "No Charge" License has been reviewed and the
 repository enforces the no-Bento/no-Tamagui constraint across direct and locked
 transitive dependencies.
 

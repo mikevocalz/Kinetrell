@@ -7,7 +7,7 @@ Kinetrell stays pre-1.0 until every gate below has evidence.
 - deterministic compiler and timeline tests;
 - native Reanimated 4.7 runtime;
 - GSAP + ScrollTrigger + Lenis browser execution;
-- Expo SDK 58 / RN 0.88 RC fixture;
+- Expo SDK 58.0.23 / RN 0.88.1 fixture in a single strict-npm CI lane;
 - package-boundary and npm-pack checks;
 - packed tarball consumer matrix on clean core/native/GSAP/Lenis consumers;
 - real Chromium + WebKit interaction coverage;
@@ -15,7 +15,7 @@ Kinetrell stays pre-1.0 until every gate below has evidence.
 - native performance/virtualization fixture;
 - semantic parallax + anchor integration;
 - browser DOM bindings and native gesture adapter;
-- current GSAP 3.15.0 Standard "No Charge" License review;
+- current GSAP 3.15.1 Standard "No Charge" License review;
 - direct + transitive Bento/Tamagui exclusion enforcement.
 
 ## Remaining before stable 1.0
@@ -23,9 +23,7 @@ Kinetrell stays pre-1.0 until every gate below has evidence.
 1. Physical iOS release-build run of the native performance fixture.
 2. Physical Android release-build run of the native performance fixture.
 3. Re-run the live npm audit immediately before tagging the release candidate.
-4. Replace or re-evaluate the Expo 58 RN 0.88 prerelease compatibility workaround
-   once Expo/RN/Reanimated publish a stable matching lane.
-5. Record unavailable physical-hardware/platform claims as unverified, never passed.
+4. Record unavailable physical-hardware/platform claims as unverified, never passed.
 
 ## Physical-device evidence format
 

@@ -96,7 +96,7 @@ export default function App() {
                 <Text style={styles.eyebrow}>KINETRELL DEVICE FIXTURE</Text>
                 <Text style={styles.title}>300-row native scroll stress test</Text>
                 <Text style={styles.subtitle}>
-                  Reanimated 4.7 · Worklets 0.13 · Expo 58.0.2 · RN 0.88 RC
+                  Reanimated 4.7 · Worklets 0.13 · Expo 58.0.23 · RN 0.88.1
                 </Text>
               </Animated.View>
             </View>

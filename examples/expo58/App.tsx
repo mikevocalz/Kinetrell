@@ -38,7 +38,7 @@ export default function App() {
     <View style={styles.screen}>
       <Animated.View style={[styles.panel, panelStyle]}>
         <Animated.Text style={[styles.title, textStyle]}>Kinetrell</Animated.Text>
-        <Text style={styles.subtitle}>Expo SDK 58 · RN 0.88 RC · Reanimated 4.7</Text>
+        <Text style={styles.subtitle}>Expo SDK 58 · RN 0.88.1 · Reanimated 4.7</Text>
       </Animated.View>
     </View>
   );

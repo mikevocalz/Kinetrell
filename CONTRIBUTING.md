@@ -15,8 +15,8 @@ npm run audit:current
 npm run verify
 ```
 
-Expo SDK 58 preview validation is a separate fixture because of the currently
-published React Native prerelease / Reanimated peer-metadata mismatch.
+CI installs `examples/expo58` with strict npm peers in the same job as the
+library (see `docs/compatibility.md`).
 
 Do not add `--force`, `--legacy-peer-deps`, dependency patches, Git URL
 runtime dependencies or global GSAP ticker policy changes to make CI green.
